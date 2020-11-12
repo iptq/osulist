@@ -16,6 +16,10 @@
               <input type="text" name="q" placeholder="search" class="search-bar">
             </form>&nbsp;&nbsp;
             {% if login['logged_in'] %}
+            <form method="POST" action="{{ url_for( 'import_playlist' ) }}" id="import-form" style="display: inline;" enctype="multipart/form-data">
+              <input type="file" id="collections-selector" name="collections" style="display: none;" />
+              <a href="javascript:importCollection();" class="navbar-button">import collection.db</a>
+            </form>
             <a href="/new_playlist" class="navbar-button">new playlist</a>&nbsp;&nbsp;
             <a id='me' href="/u/{{ login['user_id'] }}" class="nav-link">{{ login['user_name'] }}</a> |
             <a id='logout' href="/logout" class="nav-link">logout</a>
@@ -28,3 +32,19 @@
     </table>
   </td>
 </tr>
+
+  <script type="text/javascript">
+    let fileChooser = document.getElementById("collections-selector");
+    let form = document.getElementById("import-form");
+
+    window.importCollection = function() {
+      // open the dialog
+      let evt = document.createEvent("MouseEvents");
+      evt.initEvent("click", true, false);
+      fileChooser.dispatchEvent(evt);
+    }
+
+    fileChooser.addEventListener("change", () => {
+      form.submit();
+    });
+  </script>

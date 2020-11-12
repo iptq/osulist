@@ -12,6 +12,7 @@ from flask import render_template, redirect
 from functools import wraps
 from random import randrange
 from dotenv import load_dotenv, find_dotenv
+from osudb import OsuDb
 
 # import env variables
 load_dotenv( find_dotenv() )
@@ -313,6 +314,19 @@ def delete_playlist( pl_id ):
 	else:
 		return redirect( '/unauthorized/' )
 
+@app.route( '/p/import', methods=['POST'] )
+@login_required
+def import_playlist():
+	file = request.files['collections']
+	data = file.read()
+
+	# read database
+	db = OsuDb.read_from_bytes(data)
+	db.process()
+
+	print(db.collections)
+	return f"len {db.collections}"
+
 
 @app.route( '/new_playlist/', methods = ['GET', 'POST'] )
 @login_required
@@ -424,4 +438,4 @@ def page_beatmap( map_id ):
 """
 
 if __name__ == '__main__':
-	app.run( host='0.0.0.0', port=5000, debug=False )
+	app.run( host='0.0.0.0', port=5000 )
